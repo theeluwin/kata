@@ -6,6 +6,8 @@ from __future__ import division, print_function, unicode_literals
 __author__ = "theeluwin"
 __email__ = "theeluwin@gmail.com"
 
+import numpy as np
+
 from collections import defaultdict
 
 
@@ -18,10 +20,10 @@ class HMM:
         self.c_emission = defaultdict(lambda: defaultdict(lambda: 0))
         self.c_initial = defaultdict(lambda: 0)
         self.c_terminal = defaultdict(lambda: 0)
-        self.p_transition = defaultdict(lambda: defaultdict(lambda: 0))
-        self.p_emission = defaultdict(lambda: defaultdict(lambda: 0))
-        self.p_initial = defaultdict(lambda: 0)
-        self.p_terminal = defaultdict(lambda: 0)
+        self.l_transition = defaultdict(lambda: defaultdict(lambda: -np.inf))
+        self.l_emission = defaultdict(lambda: defaultdict(lambda: -np.inf))
+        self.l_initial = defaultdict(lambda: -np.inf)
+        self.l_terminal = defaultdict(lambda: -np.inf)
 
     def fit(self, train_sents):
         for sent in train_sents:
@@ -42,43 +44,37 @@ class HMM:
         for tag_from in self.tags:
             for tag_to in self.tags:
                 if self.c_tag[tag_from]:
-                    self.p_transition[tag_from][tag_to] = self.c_transition[tag_from][tag_to] / self.c_tag[tag_from]
+                    self.l_transition[tag_from][tag_to] = np.log(self.c_transition[tag_from][tag_to] / self.c_tag[tag_from])
                 else:
-                    self.p_transition[tag_from][tag_to] = 0
+                    self.l_transition[tag_from][tag_to] = -np.inf
         c_initial_sum = sum(self.c_initial.values())
         c_terminal_sum = sum(self.c_terminal.values())
         for tag in self.tags:
-            self.p_initial[tag] = self.c_initial[tag] / c_initial_sum
-            self.p_terminal[tag] = self.c_terminal[tag] / c_terminal_sum
-            emissions = []
-            for word in self.words:
-                if self.c_tag[tag] and self.c_emission[tag][word]:
-                    emissions.append(self.c_emission[tag][word] / self.c_tag[tag])
-            smoothing = min(emissions)
-            self.p_emission[tag] = defaultdict(lambda: smoothing)
+            self.l_initial[tag] = np.log(self.c_initial[tag] / c_initial_sum)
+            self.l_terminal[tag] = np.log(self.c_terminal[tag] / c_terminal_sum)
+            smoothing = min([np.log(self.c_emission[tag][word] / self.c_tag[tag]) for word in self.words if self.c_tag[tag] and self.c_emission[tag][word]])
+            self.l_emission[tag] = defaultdict(lambda: smoothing)
             for word in self.words:
                 if self.c_tag[tag]:
-                    self.p_emission[tag][word] = self.c_emission[tag][word] / self.c_tag[tag]
+                    self.l_emission[tag][word] = np.log(self.c_emission[tag][word] / self.c_tag[tag])
                 else:
-                    self.p_emission[tag][word] = smoothing
+                    self.l_emission[tag][word] = smoothing
 
     def tag(self, words):
         len_words = len(words)
-        viterbi = defaultdict(lambda: defaultdict(lambda: 0))
+        viterbi = defaultdict(lambda: defaultdict(lambda: -np.inf))
         trace = defaultdict(lambda: defaultdict(lambda: 'bos'))
-        if len_words == 0:
-            return []
         for i in range(len_words):
             word = words[i]
             for tag in self.tags:
                 if i == 0:
                     trace[tag][i] = 'bos'
-                    viterbi[tag][i] = self.p_initial[tag] * self.p_emission[tag][word]
+                    viterbi[tag][i] = self.l_initial[tag] + self.l_emission[tag][word]
                 else:
-                    flow = lambda _tag: viterbi[_tag][i - 1] * self.p_transition[_tag][tag] * self.p_emission[tag][word]
+                    flow = lambda _tag: viterbi[_tag][i - 1] + self.l_transition[_tag][tag] + self.l_emission[tag][word]
                     trace[tag][i] = max(self.tags, key=flow)
                     viterbi[tag][i] = flow(trace[tag][i])
-        trace['eos'][len_words] = max(self.tags, key=lambda _tag: viterbi[_tag][len_words - 1] * self.p_terminal[_tag])
+        trace['eos'][len_words] = max(self.tags, key=lambda _tag: viterbi[_tag][len_words - 1] + self.l_terminal[_tag])
         predictions = ['eos']
         for i in range(len_words, 0, -1):
             predictions.append(trace[predictions[-1]][i])
