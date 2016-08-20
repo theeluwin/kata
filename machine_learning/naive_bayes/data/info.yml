@@ -1,0 +1,3 @@
+reference: http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets
+source: http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic3.csv
+description: first 891 passengers were selected as a train set after shuffling (so this data will not coincide with kaggle).

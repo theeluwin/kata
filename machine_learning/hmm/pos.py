@@ -9,13 +9,15 @@ __email__ = "theeluwin@gmail.com"
 import sys
 import codecs
 import pycrfsuite
-import sklearn
 
 from itertools import chain
 from collections import Counter
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import LabelBinarizer
 from hmm import HMM
+
+
+available_methods = ['hmm', 'crf']
 
 
 def corpus2sents(filepath):
@@ -38,30 +40,24 @@ def corpus2sents(filepath):
 
 def index2feature(sent, i, offset):
     word, tag = sent[i + offset]
-    if offset < 0:
-        sign = ''
-    else:
-        sign = '+'
+    sign = '' if offset < 0 else '+'
     return '{}{}:word={}'.format(sign, offset, word)
 
 
-def word2features(sent, i):
+def word2features(sent, i, window=3):
     L = len(sent)
     word, tag = sent[i]
     features = ['bias']
     features.append(index2feature(sent, i, 0))
-    if i > 1:
-        features.append(index2feature(sent, i, -2))
-    if i > 0:
-        features.append(index2feature(sent, i, -1))
-    else:
+    if i == 0:
         features.append('bos')
-    if i < L - 2:
-        features.append(index2feature(sent, i, 2))
-    if i < L - 1:
-        features.append(index2feature(sent, i, 1))
-    else:
+    if i == L - 1:
         features.append('eos')
+    for j in range(1, window + 1):
+        if i > j - 1:
+            features.append(index2feature(sent, i, -j))
+        if i < L - j:
+            features.append(index2feature(sent, i, j))
     return features
 
 
@@ -94,70 +90,62 @@ def flush_hmm(filepath, X, Y):
 
 
 def evaluate(test_y, pred_y):
-    total, wrong = 0, 0
+    total, right = 0, 0
     for x, y in zip(test_y, pred_y):
         for i in range(len(y)):
             total += 1
-            if y[i] != x[i]:
-                wrong += 1
-    accuracy = int((1 - wrong / total) * 10000) / 100.0
+            right += 1 if x[i] == y[i] else 0
+    accuracy = int((right / total) * 10000) / 100.0
     lb = LabelBinarizer()
     test_y_combined = lb.fit_transform(list(chain.from_iterable(test_y)))
     pred_y_combined = lb.transform(list(chain.from_iterable(pred_y)))
     tagset = sorted(set(lb.classes_))
     class_indices = {cls: idx for idx, cls in enumerate(tagset)}
     print(classification_report(test_y_combined, pred_y_combined, labels=[class_indices[cls] for cls in tagset], target_names=tagset))
-    print("overall accuracy: {}".format(accuracy))
+    print("accuracy: {}".format(accuracy))
 
 
-def pos_hmm():
-    train_sents = corpus2sents('corpus/training.txt')
-    test_sents = corpus2sents('corpus/test.txt')
-    train_x = [sent2words(sent) for sent in train_sents]
+def main(method='hmm', cheat=False):
+    if method not in available_methods:
+        print("available methods: {}".format(', '.join(available_methods)))
+        return
+    train_sents = corpus2sents('data/train.txt')
+    test_sents = corpus2sents('data/test.txt')
     train_y = [sent2tags(sent) for sent in train_sents]
-    test_x = [sent2words(sent) for sent in test_sents]
     test_y = [sent2tags(sent) for sent in test_sents]
-    hmm = HMM()
-    hmm.fit(train_sents)
-    pred_y = [hmm.tag(x) for x in test_x]
-    flush_hmm('pred_hmm.txt', test_x, pred_y)
-    evaluate(test_y, pred_y)
-    print("---\n")
-
-
-def pos_crf():
-    train_sents = corpus2sents('corpus/training.txt')
-    test_sents = corpus2sents('corpus/test.txt')
-    train_x = [sent2features(sent) for sent in train_sents]
-    train_y = [sent2tags(sent) for sent in train_sents]
-    test_x = [sent2features(sent) for sent in test_sents]
-    test_y = [sent2tags(sent) for sent in test_sents]
-    trainer = pycrfsuite.Trainer()
-    for x, y in zip(train_x, train_y):
-        trainer.append(x, y)
-    trainer.train('model.crfsuite')
-    tagger = pycrfsuite.Tagger()
-    tagger.open('model.crfsuite')
-    pred_y = [tagger.tag(x) for x in test_x]
-    flush_crf('pred_crf.txt', test_x, pred_y)
-    evaluate(test_y, pred_y)
-    print("---\n")
-
-
-def main(method='hmm'):
     if method == 'hmm':
-        pos_hmm()
+        train_x = [sent2words(sent) for sent in train_sents]
+        test_x = [sent2words(sent) for sent in test_sents]
+        hmm = HMM()
+        hmm.fit(train_sents)
+        if cheat:
+            hmm.fit(test_sents)
+        pred_y = [hmm.tag(x) for x in test_x]
+        flush_hmm('output_hmm.txt', test_x, pred_y)
     elif method == 'crf':
-        pos_crf()
+        train_x = [sent2features(sent) for sent in train_sents]
+        test_x = [sent2features(sent) for sent in test_sents]
+        trainer = pycrfsuite.Trainer()
+        for x, y in zip(train_x, train_y):
+            trainer.append(x, y)
+        if cheat:
+            for x, y in zip(test_x, test_y):
+                trainer.append(x, y)
+        trainer.train('output.crfsuite')
+        tagger = pycrfsuite.Tagger()
+        tagger.open('output.crfsuite')
+        pred_y = [tagger.tag(x) for x in test_x]
+        flush_crf('output_crf.txt', test_x, pred_y)
+    evaluate(test_y, pred_y)
+    print("---\n")
 
 
 if __name__ == '__main__':
-    available_methods = ['hmm', 'crf']
     try:
         method = sys.argv[1]
     except:
         method = 'hmm'
     if method not in available_methods:
-        print("usage: python pos.py [method]\nimplemented methods: hmm, crf")
+        print("usage: python {} [method]\navailable methods: {}".format(sys.argv[0], ', '.join(available_methods)))
     else:
         main(method)

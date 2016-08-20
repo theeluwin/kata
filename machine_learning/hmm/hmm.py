@@ -64,7 +64,6 @@ class HMM:
 
     def tag(self, words):
         len_words = len(words)
-        argmax = lambda function, iterable: max(iterable, key=function)
         viterbi = defaultdict(lambda: defaultdict(lambda: 0))
         trace = defaultdict(lambda: defaultdict(lambda: 'bos'))
         if len_words == 0:
@@ -76,10 +75,10 @@ class HMM:
                     trace[tag][i] = 'bos'
                     viterbi[tag][i] = self.p_initial[tag] * self.p_emission[tag][word]
                 else:
-                    flow = lambda _tag: viterbi[_tag][i - 1] * self.p_transition[_tag][tag]
-                    trace[tag][i] = argmax(flow, self.tags)
-                    viterbi[tag][i] = flow(trace[tag][i]) * self.p_emission[tag][word]
-        trace['eos'][len_words] = argmax(lambda _tag: viterbi[_tag][len_words - 1] * self.p_terminal[_tag], self.tags)
+                    flow = lambda _tag: viterbi[_tag][i - 1] * self.p_transition[_tag][tag] * self.p_emission[tag][word]
+                    trace[tag][i] = max(self.tags, key=flow)
+                    viterbi[tag][i] = flow(trace[tag][i])
+        trace['eos'][len_words] = max(self.tags, key=lambda _tag: viterbi[_tag][len_words - 1] * self.p_terminal[_tag])
         predictions = ['eos']
         for i in range(len_words, 0, -1):
             predictions.append(trace[predictions[-1]][i])

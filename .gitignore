@@ -89,5 +89,4 @@ ENV/
 .ropeproject
 
 # Project specific
-*.crfsuite
-pred_*
+output*
