@@ -30,9 +30,9 @@ Bonus Point:
 
 ## Todo
 
-"구현할 알고리즘 - 비교용 알고리즘 - 풀만한 task" 형식으로 기재
+"구현할 알고리즘 / 비교용 알고리즘 / 풀만한 task" 형식으로 기재
 
-- [ ] Linear Regression - Gradient Descent / Linear Regression - Exact Solution / Sample Fitting
+- [ ] Linear Regression (Gradient Descent) / Linear Regression (Exact Solution) / Sample Fitting
 - [ ] Logistic Regression / ? / ?
 - [x] [HMM](https://en.wikipedia.org/wiki/Hidden_Markov_model) / [CRF](https://en.wikipedia.org/wiki/Conditional_random_field) / [POS tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
 - [x] [Naive Bayes](https://en.wikipedia.org/wiki/Naive_Bayes_classifier) / [Random Forest](https://en.wikipedia.org/wiki/Random_forest) / [Titanic Survival](https://www.kaggle.com/c/titanic)
