@@ -24,7 +24,7 @@ class NaiveBayesClassifier:
 
     def fit(self, train_x, train_y):
         self.classes_y = np.unique(np.concatenate([self.classes_y, train_y]))
-        self.classes_x = [np.unique(np.concatenate([self.classes_x[k], train_x[0::, k]])) for k in range(self.dimension)]
+        self.classes_x = [np.unique(np.concatenate([self.classes_x[k], train_x[:, k]])) for k in range(self.dimension)]
         for class_y in self.classes_y:
             self.c_prevalance[class_y] += len(train_y[train_y == class_y])
         total_y = sum(self.c_prevalance.values())
@@ -34,7 +34,7 @@ class NaiveBayesClassifier:
             conditional = np.array([train_x[i] for i in range(len(train_x)) if train_y[i] == class_y])
             for k in range(self.dimension):
                 for class_x in self.classes_x[k]:
-                    self.c_bayes[class_y][k][class_x] += len(conditional[conditional[0::, k] == class_x])
+                    self.c_bayes[class_y][k][class_x] += len(conditional[conditional[:, k] == class_x])
                 total_x = sum(self.c_bayes[class_y][k].values())
                 for class_x in self.classes_x[k]:
                     self.l_bayes[class_y][k][class_x] = np.log(self.c_bayes[class_y][k][class_x] / total_x)

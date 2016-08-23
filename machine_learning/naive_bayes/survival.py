@@ -76,7 +76,11 @@ if __name__ == '__main__':
         method = sys.argv[1]
     except:
         method = 'naive_bayes'
+    try:
+        cheat = bool(sys.argv[2])
+    except:
+        cheat = False
     if method not in available_methods:
         print("usage: python {} [method]\navailable methods: {}".format(sys.argv[0], ', '.join(available_methods)))
     else:
-        main(method)
+        main(method, cheat)
