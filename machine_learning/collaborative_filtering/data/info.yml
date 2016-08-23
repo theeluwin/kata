@@ -1,0 +1,3 @@
+reference: http://grouplens.org/datasets/movielens/
+source: http://files.grouplens.org/datasets/movielens/ml-100k.zip
+description: "small data set (100k), 25% for test"
