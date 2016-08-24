@@ -25,6 +25,7 @@
 Bonus Point:
 * partial fit이 가능하면 구현 해볼것!
 * test set까지 학습해버리면(cheating) 정말로 성능이 증가하는지 체크
+* plot figure
 
 <br>
 
@@ -32,7 +33,7 @@ Bonus Point:
 
 "구현할 알고리즘 / 비교용 알고리즘 / 풀만한 task" 형식으로 기재
 
-- [ ] Linear Regression (Gradient Descent) / Linear Regression (Exact Solution) / Sample Fitting
+- [X] Linear Regression (Gradient Descent) / Linear Regression (Exact Solution) / Sample Fitting
 - [x] Collaborative Filtering (Memory-Based) / Collaborative Filtering (Model-Based) / [MovieLens](http://grouplens.org/datasets/movielens/)
 - [ ] Logistic Regression / ? / ?
 - [x] [HMM](https://en.wikipedia.org/wiki/Hidden_Markov_model) / [CRF](https://en.wikipedia.org/wiki/Conditional_random_field) / [POS tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
