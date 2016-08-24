@@ -64,9 +64,9 @@ def evaluate(test_matrix, pred_matrix):
 
 def predict(matrix):
     similarity = pairwise_distances(matrix, metric='cosine')
-    means = matrix.mean(axis=1)
-    normalized_matrix = matrix - means[:, np.newaxis]
-    return means[:, np.newaxis] + similarity.dot(normalized_matrix) / np.array([np.abs(similarity).sum(axis=1)]).T
+    means = matrix.mean(axis=1)[:, np.newaxis]
+    normalized_matrix = matrix - means
+    return means + similarity.dot(normalized_matrix) / np.abs(similarity).sum(axis=1)[:, np.newaxis]
 
 
 def main(method='memory_based', cheat=False):
