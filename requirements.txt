@@ -1,9 +1,12 @@
+cycler==0.10.0
 funcsigs==1.0.2
+matplotlib==1.5.2
 mock==2.0.0
 numpy==1.11.1
 pandas==0.18.1
 pbr==1.10.0
 protobuf==3.0.0b2
+pyparsing==2.1.8
 python-crfsuite==0.8.4
 python-dateutil==2.5.3
 pytz==2016.6.1
