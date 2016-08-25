@@ -60,22 +60,22 @@ def descent(train_x, train_y, learning_rate=1e-1, verbose=False, cost_figure=Fal
     samples, order = train_x.shape
     initializer = lambda: random.random() * 2 - 1
     bias = initializer()
-    params = np.array([initializer() for i in range(1, order + 1)])
+    weights = np.array([initializer() for i in range(1, order + 1)])
     mean_x = train_x.mean(axis=0)
     mean_y = train_y.mean()
     width_x = train_x.max(axis=0) - train_x.min(axis=0)
     width_y = train_y.max() - train_y.min()
     normalized_x = (train_x - mean_x) / width_x
     normalized_y = (train_y - mean_y) / width_y
-    cost = lambda: np.square((params * normalized_x).sum(axis=1) + bias - normalized_y).sum() / 2 / samples
+    cost = lambda: np.square((weights * normalized_x).sum(axis=1) + bias - normalized_y).sum() / 2 / samples
     update = lambda error: -learning_rate * error / samples
     epoch = 0
     costs = [cost()]
     while True:
-        error_bias = ((params * normalized_x).sum(axis=1) + bias - normalized_y).sum()
-        error_params = (((params * normalized_x).sum(axis=1) + bias - normalized_y)[:, np.newaxis] * normalized_x).sum(axis=0)
+        error_bias = ((weights * normalized_x).sum(axis=1) + bias - normalized_y).sum()
+        error_weights = (((weights * normalized_x).sum(axis=1) + bias - normalized_y)[:, np.newaxis] * normalized_x).sum(axis=0)
         bias += update(error_bias)
-        params += update(error_params)
+        weights += update(error_weights)
         current_cost = cost()
         if verbose and not epoch % 1000:
             print("current cost (normalized): {}".format(current_cost))
@@ -85,9 +85,9 @@ def descent(train_x, train_y, learning_rate=1e-1, verbose=False, cost_figure=Fal
         costs.append(current_cost)
     if cost_figure:
         draw_cost_figure(costs, cost_figure)
-    bias = width_y * bias + mean_y - (width_y * mean_x * params / width_x).sum()
-    params = width_y * params / width_x
-    return np.concatenate([np.array([bias]), params])[::-1]
+    bias = width_y * bias + mean_y - (width_y * mean_x * weights / width_x).sum()
+    weights = width_y * weights / width_x
+    return np.concatenate([np.array([bias]), weights])[::-1]
 
 
 def exact(train_x, train_y):
@@ -127,8 +127,8 @@ def tensor(train_x, train_y, learning_rate=1e-4, batch=100, verbose=True, cost_f
     if cost_figure:
         draw_cost_figure(costs, cost_figure)
     bias = session.run(b)
-    params = session.run(W).flatten()
-    return np.concatenate([np.array([bias]), params])[::-1]
+    weights = session.run(W).flatten()
+    return np.concatenate([np.array([bias]), weights])[::-1]
 
 
 def main(method='gradient_descent', cheat=False):
