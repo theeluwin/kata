@@ -38,21 +38,16 @@ def purify_row(row):
     return [inting(row[0]), inting(row[1]), floating(row[2])]
 
 
-def read_data(filepath, cheat=False):
+def read_data(filepath):
     rows = codecs.open(filepath, 'r', encoding='utf-8').read().split('\n')
-    data = np.array([purify_row(row) for row in rows if row])
-    n_users = len(np.unique(data[:, 0]))
-    n_items = len(np.unique(data[:, 1]))
-    train_data, test_data = cross_validation.train_test_split(data, test_size=0.25)
-    if cheat:
-        train_data = data
-    train_matrix = np.zeros((n_users, n_items))
-    test_matrix = np.zeros((n_users, n_items))
-    for row in train_data:
-        train_matrix[int(row[0]) - 1, int(row[1]) - 1] = row[2]
-    for row in test_data:
-        test_matrix[int(row[0]) - 1, int(row[1]) - 1] = row[2]
-    return train_matrix, test_matrix
+    return np.array([purify_row(row) for row in rows if row])
+
+
+def data2matrix(data, users, items):
+    matrix = np.zeros((users, items))
+    for row in data:
+        matrix[int(row[0]) - 1, int(row[1]) - 1] = row[2]
+    return matrix
 
 
 def evaluate(test_matrix, pred_matrix):
@@ -73,7 +68,15 @@ def main(method='memory_based', cheat=False):
     if method not in available_methods:
         print("available methods: {}".format(', '.join(available_methods)))
         return
-    train_matrix, test_matrix = read_data('data/100k.csv', cheat=cheat)
+    train_data = read_data('data/train.csv')
+    test_data = read_data('data/test.csv')
+    data = np.concatenate([train_data, test_data])
+    users = len(np.unique(data[:, 0]))
+    items = len(np.unique(data[:, 1]))
+    if cheat:
+        train_data = data
+    train_matrix = data2matrix(train_data, users, items)
+    test_matrix = data2matrix(test_data, users, items)
     if method == 'memory_based':
         pred_matrix = predict(train_matrix)
     elif method == 'model_based':
