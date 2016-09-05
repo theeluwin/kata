@@ -5,12 +5,10 @@ from __future__ import division, print_function, unicode_literals
 
 import sys
 import codecs
-import random
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from sklearn import cross_validation
 from sklearn.metrics import mean_squared_error
 
 
@@ -19,8 +17,8 @@ available_methods = ['gradient_descent', 'exact_solution', 'numpy_polyfit', 'ten
 
 
 def create_data():
-    data = [(x, target(x) + random.random() * 10 - 5) for x in np.linspace(5, 20, 1000)]
-    train_data, test_data = cross_validation.train_test_split(data, test_size=0.25)
+    data = [(x, target(x) + np.random.randn() * 3) for x in np.linspace(5, 20, 1000)]
+    train_data, test_data = data[:750], data[750:]
     csvfy = lambda data: '\n'.join(['{},{}'.format(x, y) for x, y in data]) + '\n'
     codecs.open('data/train.csv', 'w', encoding='utf-8').write(csvfy(train_data))
     codecs.open('data/test.csv', 'w', encoding='utf-8').write(csvfy(test_data))
@@ -47,47 +45,51 @@ def z_rescale(weights, bias, mean_x, std_x, mean_y, std_y):
     return std_y * weights / std_x, std_y * bias + mean_y - (std_y * weights * mean_x / std_x).sum()
 
 
-def plot_fit(filepath, data_x, data_y, predict, target=None):
-    space = np.linspace(data_x.min(), data_x.max(), 1000)
+def plot_fit(filepath, train_x, train_y, test_x, test_y, predict, target=None):
+    space = np.linspace(min(train_x.min(), test_x.min()), max(train_x.max(), test_x.max()), 1000)
     plt.clf()
-    plt.scatter(data_x, data_y, color='g', alpha=0.5, label='samples')
-    plt.plot(space, predict(space), color='r', label='predicted')
+    subplot = plt.subplot()
+    subplot.scatter(train_x, train_y, color='g', alpha=0.5, label='train samples')
+    subplot.scatter(test_x, test_y, color='c', alpha=0.5, label='test samples')
+    subplot.plot(space, predict(space), color='r', label='predicted')
     if target:
-        plt.plot(space, target(space), color='b', label='target')
+        subplot.plot(space, target(space), color='b', label='target')
+    box = subplot.get_position()
+    subplot.set_position([box.x0, box.y0, box.width * 0.75, box.height])
+    subplot.legend(loc='upper left', bbox_to_anchor=(1, 0.5))
     plt.xlabel('x values')
     plt.ylabel('y values')
-    plt.legend()
     plt.savefig(filepath)
 
 
 def plot_cost(filepath, costs):
     plt.clf()
-    plt.plot(range(len(costs)), costs, color='b', label='cost')
+    subplot = plt.subplot()
+    subplot.plot(range(len(costs)), costs, color='b', label='cost')
+    subplot.legend()
     plt.xlabel('epoch')
     plt.ylabel('cost')
-    plt.legend()
     plt.savefig(filepath)
 
 
-def evaluate(test_y, pred_y):
-    print("rms: {}".format(np.sqrt(mean_squared_error(test_y, pred_y))))
+def evaluate(test_y, pred_y, cheated=False):
+    print("rms{}: {}".format(" (cheated)" if cheated else '', np.sqrt(mean_squared_error(test_y, pred_y))))
 
 
-def descent(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-4, verbose=True, cost_figure=False):
+def descent(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2, verbose=True, cost_figure=False):
     if normalize:
         train_x, mean_x, std_x = z_normalize(train_x)
         train_y, mean_y, std_y = z_normalize(train_y)
     samples, order = train_x.shape
-    initializer = lambda: random.random() * 2 - 1
-    bias = initializer()
-    weights = np.array([initializer() for i in range(order)])
-    cost = lambda: np.square((weights * train_x).sum(axis=1) + bias - train_y).sum() / 2 / samples + regularize * (np.square(weights).sum() + bias * bias)
+    bias = np.random.randn()
+    weights = np.array([np.random.randn() for i in range(order)])
+    cost = lambda: (np.square((weights * train_x).sum(axis=1) + bias - train_y).sum() + regularize * np.square(weights).sum()) / (2 * samples)
     update = lambda error: -learning_rate * error / samples
     epoch = 0
     costs = [cost()]
     while True:
-        error_bias = ((weights * train_x).sum(axis=1) + bias - train_y).sum() + 2 * regularize * bias
-        error_weights = (((weights * train_x).sum(axis=1) + bias - train_y)[:, np.newaxis] * train_x).sum(axis=0) + 2 * regularize * weights
+        error_bias = ((weights * train_x).sum(axis=1) + bias - train_y).sum()
+        error_weights = (((weights * train_x).sum(axis=1) + bias - train_y)[:, np.newaxis] * train_x).sum(axis=0) + regularize * weights
         bias += update(error_bias)
         weights += update(error_weights)
         current_cost = cost()
@@ -108,10 +110,11 @@ def exact(train_x, train_y):
     X = np.matrix(train_x)
     Y = np.matrix(train_y).T
     solution = np.linalg.solve(X.T.dot(X), X.T.dot(Y))
+    # todo: regularization
     return np.array(solution).flatten()[::-1]
 
 
-def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-4, batch=100, verbose=True, cost_figure=False):
+def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2, batch=100, verbose=True, cost_figure=False):
     if normalize:
         train_x, mean_x, std_x = z_normalize(train_x)
         train_y, mean_y, std_y = z_normalize(train_y)
@@ -124,10 +127,7 @@ def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-4
     W = tf.Variable(tf.random_normal([order_x, order_y]), name='W')
     b = tf.Variable(np.random.randn(), name='b')
     pred_Y = tf.add(tf.matmul(X, W), b)
-    if regularize > 0:
-        cost = tf.reduce_sum(tf.div(tf.pow(pred_Y - Y, 2), 2 * samples)) + regularize * (tf.reduce_sum(tf.pow(W, 2)) + b * b)
-    else:
-        cost = tf.reduce_sum(tf.div(tf.pow(pred_Y - Y, 2), 2 * samples))
+    cost = tf.div(tf.reduce_sum(tf.pow(pred_Y - Y, 2)) + regularize * tf.reduce_sum(tf.pow(W, 2)), 2 * samples)
     optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
     init = tf.initialize_all_variables()
     session = tf.Session()
@@ -135,6 +135,10 @@ def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-4
     epoch = 0
     costs = []
     while True:
+        data = np.concatenate([train_x, train_y], axis=1)
+        np.random.shuffle(data)
+        train_x = data[:, :order_x]
+        train_y = data[:, order_x:]
         if batch:
             for i in range(int(samples / batch) + 1):
                 session.run(optimizer, feed_dict={X: train_x[batch * i: batch * (i + 1), :], Y: train_y[batch * i: batch * (i + 1), :]})
@@ -156,8 +160,8 @@ def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-4
     return np.concatenate([np.array([bias]), weights])[::-1]
 
 
-def power_chain(data, orders):
-    return np.array([np.power(data, order) for order in orders]).T
+def power_chain(data, degrees):
+    return np.array([np.power(data, degree) for degree in degrees]).T
 
 
 def main(method='gradient_descent', cheat=False):
@@ -169,21 +173,23 @@ def main(method='gradient_descent', cheat=False):
     if cheat:
         train_x = np.concatenate([train_x, test_x])
         train_y = np.concatenate([train_y, test_y])
-    order = 2
+    fit_figure = 'output_fit_{}{}.png'.format(method, "_cheated" if cheat else '')
+    cost_figure = 'output_cost_{}{}.png'.format(method, "_cheated" if cheat else '')
+    degree = 2
     if method == 'gradient_descent':
-        features = power_chain(train_x, range(1, order + 1))
-        coeffs = descent(features, train_y, learning_rate=1e-1, normalize=True, regularize=1e-4, verbose=True, cost_figure='output_cost_gradient_descent.png')
+        features = power_chain(train_x, range(1, degree + 1))
+        coeffs = descent(features, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2, verbose=True, cost_figure=cost_figure)
     elif method == 'exact_solution':
-        features = power_chain(train_x, range(order + 1))
+        features = power_chain(train_x, range(degree + 1))
         coeffs = exact(features, train_y)
     elif method == 'numpy_polyfit':
-        coeffs = np.polyfit(train_x, train_y, order)
+        coeffs = np.polyfit(train_x, train_y, degree)
     elif method == 'tensorflow':
-        features = power_chain(train_x, range(1, order + 1))
-        coeffs = tensor(features, train_y, learning_rate=1e-1, normalize=True, regularize=1e-4, batch=100, verbose=True, cost_figure='output_cost_tensorflow.png')
+        features = power_chain(train_x, range(1, degree + 1))
+        coeffs = tensor(features, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2, batch=100, verbose=True, cost_figure=cost_figure)
     predict = np.poly1d(coeffs)
-    evaluate(test_y, predict(test_x))
-    plot_fit('output_{}.png'.format(method), test_x, test_y, predict, target)
+    evaluate(test_y, predict(test_x), cheated=cheat)
+    plot_fit(fit_figure, train_x, train_y, test_x, test_y, predict, target)
 
 
 if __name__ == '__main__':

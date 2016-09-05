@@ -21,7 +21,7 @@
 6. 데이터셋 포함
 	* 크기가 너무 크면 다운로더를 제공
 	* 공개된 자료(출처 명시) 혹은 쉽게 생성해낼 수 있는 데이터를 사용
-7. 최대한 범용적이게 구현할것 (예시: Naive Bayes 구현체)
+7. 최대한 범용적이게 구현할것 (예시: [HMM](https://github.com/theeluwin/kata/blob/master/machine_learning/hmm/hmm.py) 혹은 [Naive Bayes 구현체](https://github.com/theeluwin/kata/blob/master/machine_learning/naive_bayes/naive_bayes.py)처럼)
 
 Bonus Point:
 * partial fit이 가능하면 구현 해볼것!
@@ -36,11 +36,10 @@ Bonus Point:
 
 - [X] Linear Regression (Gradient Descent) / Linear Regression (Exact Solution) / Sample Fitting
 - [x] Collaborative Filtering (Memory-Based) / Collaborative Filtering (Model-Based) / [MovieLens](http://grouplens.org/datasets/movielens/)
-- [ ] Logistic Regression / ? / ?
 - [x] [HMM](https://en.wikipedia.org/wiki/Hidden_Markov_model) / [CRF](https://en.wikipedia.org/wiki/Conditional_random_field) / [POS tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
 - [x] [Naive Bayes](https://en.wikipedia.org/wiki/Naive_Bayes_classifier) / [Random Forest](https://en.wikipedia.org/wiki/Random_forest) / [Titanic Survival](https://www.kaggle.com/c/titanic)
-- [ ] [Random Forest](https://en.wikipedia.org/wiki/Random_forest) / [FFNN](https://en.wikipedia.org/wiki/Feedforward_neural_network) / [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
+- [ ] [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression), [Random Forest](https://en.wikipedia.org/wiki/Random_forest) / [FFNN](https://en.wikipedia.org/wiki/Feedforward_neural_network) / [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
 
 (쓰다가 귀찮아짐)
 
-k-means, agglomerative clustering, dbscan, svm.. 등등도 있고 뉴럴넷은 가장 기본적인 형태의 FFNN, CNN, RNN 까지만 구현 해보는걸로.. 여기까지도 이미 솔직히 버겁다 인생
+k-means, agglomerative clustering, dbscan, svm.. 등등도 있고 뉴럴넷은 가장 기본적인 형태의 FFNN, CNN, RNN 까지만 텐서플로우 없이 구현 해보는걸 목표로.. 좀 무리수인가? 여기까지도 이미 솔직히 버겁다 인생
