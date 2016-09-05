@@ -21,12 +21,12 @@
 6. 데이터셋 포함
 	* 크기가 너무 크면 다운로더를 제공
 	* 공개된 자료(출처 명시) 혹은 쉽게 생성해낼 수 있는 데이터를 사용
-7. 최대한 범용적이게 구현할것 (예시: [HMM](https://github.com/theeluwin/kata/blob/master/machine_learning/hmm/hmm.py) 혹은 [Naive Bayes 구현체](https://github.com/theeluwin/kata/blob/master/machine_learning/naive_bayes/naive_bayes.py)처럼)
+7. 최대한 범용적이게 구현할것 (예시: [HMM 구현체](https://github.com/theeluwin/kata/blob/master/machine_learning/hmm/hmm.py) 혹은 [Naive Bayes 구현체](https://github.com/theeluwin/kata/blob/master/machine_learning/naive_bayes/naive_bayes.py)처럼)
 
 Bonus Point:
 * partial fit이 가능하면 구현 해볼것!
 * test set까지 학습해버리면(cheating) 정말로 성능이 증가하는지 체크
-* plot figure 이쁘게
+* figure 이쁘게 그리기
 
 <br>
 
