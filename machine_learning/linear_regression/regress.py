@@ -106,11 +106,14 @@ def descent(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-
     return np.concatenate([np.array([bias]), weights])[::-1]
 
 
-def exact(train_x, train_y):
+def exact(train_x, train_y, regularize=1e-2):
     X = np.matrix(train_x)
     Y = np.matrix(train_y).T
-    solution = np.linalg.solve(X.T.dot(X), X.T.dot(Y))
-    # todo: regularization
+    square = X.T.dot(X)
+    n, n = square.shape
+    I = np.eye(n)
+    I[0, 0] = 0
+    solution = np.linalg.solve(X.T.dot(X) + regularize * I, X.T.dot(Y))
     return np.array(solution).flatten()[::-1]
 
 
@@ -181,7 +184,7 @@ def main(method='gradient_descent', cheat=False):
         coeffs = descent(features, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2, verbose=True, cost_figure=cost_figure)
     elif method == 'exact_solution':
         features = power_chain(train_x, range(degree + 1))
-        coeffs = exact(features, train_y)
+        coeffs = exact(features, train_y, regularize=1e-2)
     elif method == 'numpy_polyfit':
         coeffs = np.polyfit(train_x, train_y, degree)
     elif method == 'tensorflow':
