@@ -90,6 +90,8 @@ def descent(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-
     while True:
         error_bias = ((weights * train_x).sum(axis=1) + bias - train_y).sum()
         error_weights = (((weights * train_x).sum(axis=1) + bias - train_y)[:, np.newaxis] * train_x).sum(axis=0) + regularize * weights
+        # note: if you use column vector rather than just np arrays (which have shapes like (m,)), then calculations can be much simpler
+        # ex: error_weights = train_x.T * (train_x * weights + bias - train_y) + regularize * weights
         bias += update(error_bias)
         weights += update(error_weights)
         current_cost = cost()
