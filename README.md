@@ -34,11 +34,13 @@ Bonus Point:
 
 "구현할 알고리즘 / 비교용 알고리즘 / 풀만한 task" 형식으로 기재
 
-- [X] Linear Regression (Gradient Descent) / Linear Regression (Exact Solution) / Sample Fitting
+- [X] Linear Regression - Gradient Descent, Exact Solution / Polyfit by NP, LR with TF / Polynomial Fitting
 - [x] Collaborative Filtering (Memory-Based) / Collaborative Filtering (Model-Based) / [MovieLens](http://grouplens.org/datasets/movielens/)
 - [x] [HMM](https://en.wikipedia.org/wiki/Hidden_Markov_model) / [CRF](https://en.wikipedia.org/wiki/Conditional_random_field) / [POS tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
 - [x] [Naive Bayes](https://en.wikipedia.org/wiki/Naive_Bayes_classifier) / [Random Forest](https://en.wikipedia.org/wiki/Random_forest) / [Titanic Survival](https://www.kaggle.com/c/titanic)
-- [ ] [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression), [Random Forest](https://en.wikipedia.org/wiki/Random_forest) / [FFNN](https://en.wikipedia.org/wiki/Feedforward_neural_network) / [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
+- [ ] [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression), [FFNN](https://en.wikipedia.org/wiki/Feedforward_neural_network) / FFNN with TF / [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
+- [SVM](https://en.wikipedia.org/wiki/Support_vector_machine) / ? / ?
+- [Random Forest](https://en.wikipedia.org/wiki/Random_forest) / ? / ?
 
 (쓰다가 귀찮아짐)
 
