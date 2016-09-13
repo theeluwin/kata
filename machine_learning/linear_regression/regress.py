@@ -26,8 +26,8 @@ def create_data():
 
 def read_data(filepath, cheat=False):
     lines = codecs.open(filepath, 'r', encoding='utf-8').read().split('\n')
-    data = np.array([[float(t) for t in line.split(',')] for line in lines if line])
-    return data[:, 0], data[:, 1]
+    data = np.asarray([[float(t) for t in line.split(',')] for line in lines if line])
+    return np.split(data, [-1], axis=1)
 
 
 def z_normalize(data):
@@ -41,8 +41,9 @@ def z_normalize(data):
     return normalized, mean, std
 
 
-def z_rescale(weights, bias, mean_x, std_x, mean_y, std_y):
-    return std_y * weights / std_x, std_y * bias + mean_y - (std_y * weights * mean_x / std_x).sum()
+def z_rescale(bias, weights, mean_x, std_x, mean_y, std_y):
+    amplifier = std_y * weights.T / std_x
+    return std_y * bias + mean_y - (amplifier * mean_x).sum(), amplifier.T
 
 
 def plot_fit(filepath, train_x, train_y, test_x, test_y, predict, target=None):
@@ -80,18 +81,17 @@ def descent(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-
     if normalize:
         train_x, mean_x, std_x = z_normalize(train_x)
         train_y, mean_y, std_y = z_normalize(train_y)
-    samples, order = train_x.shape
+    samples, order_x = train_x.shape
+    samples, order_y = train_y.shape
     bias = np.random.randn()
-    weights = np.array([np.random.randn() for i in range(order)])
-    cost = lambda: (np.square((weights * train_x).sum(axis=1) + bias - train_y).sum() + regularize * np.square(weights).sum()) / (2 * samples)
+    weights = np.random.randn(order_x, order_y)
+    cost = lambda: np.asscalar((np.square(train_x.dot(weights) + bias - train_y).sum() + regularize * weights.T.dot(weights)) / (2 * samples))
     update = lambda error: -learning_rate * error / samples
     epoch = 0
     costs = [cost()]
     while True:
-        error_bias = ((weights * train_x).sum(axis=1) + bias - train_y).sum()
-        error_weights = (((weights * train_x).sum(axis=1) + bias - train_y)[:, np.newaxis] * train_x).sum(axis=0) + regularize * weights
-        # note: if you use column vector rather than just np arrays (which have shapes like (m,)), then calculations can be much simpler
-        # ex: error_weights = train_x.T * (train_x * weights + bias - train_y) + regularize * weights
+        error_bias = (train_x.dot(weights) + bias - train_y).sum()
+        error_weights = train_x.T.dot(train_x.dot(weights) + bias - train_y) + regularize * weights
         bias += update(error_bias)
         weights += update(error_weights)
         current_cost = cost()
@@ -104,35 +104,31 @@ def descent(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-
     if cost_figure:
         plot_cost(cost_figure, costs)
     if normalize:
-        weights, bias = z_rescale(weights, bias, mean_x, std_x, mean_y, std_y)
-    return np.concatenate([np.array([bias]), weights])[::-1]
+        bias, weights = z_rescale(bias, weights, mean_x, std_x, mean_y, std_y)
+    return np.flipud(np.concatenate([bias, weights.flatten()]))
 
 
 def exact(train_x, train_y, regularize=1e-2):
-    X = np.matrix(train_x)
-    Y = np.matrix(train_y).T
-    square = X.T.dot(X)
+    square = train_x.T.dot(train_x)
     n, n = square.shape
-    I = np.eye(n)
-    I[0, 0] = 0
-    solution = np.linalg.solve(X.T.dot(X) + regularize * I, X.T.dot(Y))
-    return np.array(solution).flatten()[::-1]
+    diagonal = np.eye(n)
+    diagonal[0, 0] = 0
+    solution = np.linalg.solve(square + regularize * diagonal, train_x.T.dot(train_y))
+    return np.flipud(solution.flatten())
 
 
 def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2, batch=100, verbose=True, cost_figure=False):
     if normalize:
         train_x, mean_x, std_x = z_normalize(train_x)
         train_y, mean_y, std_y = z_normalize(train_y)
-    train_x = np.matrix(train_x)
-    train_y = np.matrix(train_y).T
     samples, order_x = train_x.shape
     samples, order_y = train_y.shape
     X = tf.placeholder('float', [None, order_x], name='X')
     Y = tf.placeholder('float', [None, order_y], name='Y')
+    b = tf.Variable(tf.random_normal(()), name='b')
     W = tf.Variable(tf.random_normal([order_x, order_y]), name='W')
-    b = tf.Variable(np.random.randn(), name='b')
     pred_Y = tf.add(tf.matmul(X, W), b)
-    cost = tf.div(tf.reduce_sum(tf.pow(pred_Y - Y, 2)) + regularize * tf.reduce_sum(tf.pow(W, 2)), 2 * samples)
+    cost = tf.div(tf.reduce_sum(tf.square(pred_Y - Y)) + regularize * tf.reduce_sum(tf.square(W)), 2 * samples)
     optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
     init = tf.initialize_all_variables()
     session = tf.Session()
@@ -142,11 +138,13 @@ def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2
     while True:
         data = np.concatenate([train_x, train_y], axis=1)
         np.random.shuffle(data)
-        train_x = data[:, :order_x]
-        train_y = data[:, order_x:]
+        train_x, train_y = np.split(data, [-order_y], axis=1)
         if batch:
             for i in range(int(samples / batch) + 1):
-                session.run(optimizer, feed_dict={X: train_x[batch * i: batch * (i + 1), :], Y: train_y[batch * i: batch * (i + 1), :]})
+                session.run(optimizer, feed_dict={
+                    X: train_x[batch * i: batch * (i + 1), :],
+                    Y: train_y[batch * i: batch * (i + 1), :],
+                })
         else:
             session.run(optimizer, feed_dict={X: train_x, Y: train_y})
         current_cost = session.run(cost, feed_dict={X: train_x, Y: train_y})
@@ -158,15 +156,15 @@ def tensor(train_x, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2
         costs.append(current_cost)
     if cost_figure:
         plot_cost(cost_figure, costs)
-    weights = session.run(W).flatten()
     bias = session.run(b)
+    weights = session.run(W)
     if normalize:
-        weights, bias = z_rescale(weights, bias, mean_x, std_x, mean_y, std_y)
-    return np.concatenate([np.array([bias]), weights])[::-1]
+        bias, weights = z_rescale(bias, weights, mean_x, std_x, mean_y, std_y)
+    return np.flipud(np.concatenate([bias, weights.flatten()]))
 
 
 def power_chain(data, degrees):
-    return np.array([np.power(data, degree) for degree in degrees]).T
+    return np.concatenate([np.power(data, degree) for degree in degrees], axis=1)
 
 
 def main(method='gradient_descent', cheat=False):
@@ -176,8 +174,8 @@ def main(method='gradient_descent', cheat=False):
     train_x, train_y = read_data('data/train.csv')
     test_x, test_y = read_data('data/test.csv')
     if cheat:
-        train_x = np.concatenate([train_x, test_x])
-        train_y = np.concatenate([train_y, test_y])
+        train_x = np.concatenate([train_x, test_x], axis=0)
+        train_y = np.concatenate([train_y, test_y], axis=0)
     fit_figure = 'output_fit_{}{}.png'.format(method, "_cheated" if cheat else '')
     cost_figure = 'output_cost_{}{}.png'.format(method, "_cheated" if cheat else '')
     degree = 2
@@ -188,7 +186,7 @@ def main(method='gradient_descent', cheat=False):
         features = power_chain(train_x, range(degree + 1))
         coeffs = exact(features, train_y, regularize=1e-2)
     elif method == 'numpy_polyfit':
-        coeffs = np.polyfit(train_x, train_y, degree)
+        coeffs = np.polyfit(train_x.flatten(), train_y.flatten(), degree)
     elif method == 'tensorflow':
         features = power_chain(train_x, range(1, degree + 1))
         coeffs = tensor(features, train_y, learning_rate=1e-1, normalize=True, regularize=1e-2, batch=100, verbose=True, cost_figure=cost_figure)
