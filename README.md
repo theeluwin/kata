@@ -29,7 +29,7 @@ Bonus Point:
 * partial fit이 가능하면 구현 해볼것
 * 예쁘게 figure 그리기
 
-<br>
+<br />
 
 ## Todo
 
@@ -98,6 +98,8 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
     - [ ] [LSTM](https://en.wikipedia.org/wiki/Long_short-term_memory), using TF
 
 이정도면 아마 고전적인 머신러닝 알고리즘들은 대부분 커버할 수 있을듯?
+
+<br />
 
 ## Advanced
 
