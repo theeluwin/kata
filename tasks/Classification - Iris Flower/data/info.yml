@@ -1,0 +1,3 @@
+reference: http://archive.ics.uci.edu/ml/datasets/Iris
+source: http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data
+description: "comma-seperated iris flower data, train:test = 8:2"

@@ -44,19 +44,19 @@ class HMM:
         for tag_from in self.tags:
             for tag_to in self.tags:
                 if self.c_tag[tag_from]:
-                    self.l_transition[tag_from][tag_to] = np.log(self.c_transition[tag_from][tag_to] / self.c_tag[tag_from])
+                    self.l_transition[tag_from][tag_to] = np.log(self.c_transition[tag_from][tag_to]) - np.log(self.c_tag[tag_from])
                 else:
                     self.l_transition[tag_from][tag_to] = -np.inf
         c_initial_sum = sum(self.c_initial.values())
         c_terminal_sum = sum(self.c_terminal.values())
         for tag in self.tags:
-            self.l_initial[tag] = np.log(self.c_initial[tag] / c_initial_sum)
-            self.l_terminal[tag] = np.log(self.c_terminal[tag] / c_terminal_sum)
-            smoothing = min([np.log(self.c_emission[tag][word] / self.c_tag[tag]) for word in self.words if self.c_tag[tag] and self.c_emission[tag][word]])
+            self.l_initial[tag] = np.log(self.c_initial[tag]) - np.log(c_initial_sum)
+            self.l_terminal[tag] = np.log(self.c_terminal[tag]) - np.log(c_terminal_sum)
+            smoothing = min([np.log(self.c_emission[tag][word]) - np.log(self.c_tag[tag]) for word in self.words if self.c_tag[tag] and self.c_emission[tag][word]])
             self.l_emission[tag] = defaultdict(lambda: smoothing)
             for word in self.words:
                 if self.c_tag[tag]:
-                    self.l_emission[tag][word] = np.log(self.c_emission[tag][word] / self.c_tag[tag])
+                    self.l_emission[tag][word] = np.log(self.c_emission[tag][word]) - np.log(self.c_tag[tag])
                 else:
                     self.l_emission[tag][word] = smoothing
 

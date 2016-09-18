@@ -3,6 +3,9 @@
 
 from __future__ import division, print_function, unicode_literals
 
+__author__ = "theeluwin"
+__email__ = "theeluwin@gmail.com"
+
 import sys
 import codecs
 import numpy as np

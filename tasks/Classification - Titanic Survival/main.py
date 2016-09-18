@@ -12,7 +12,7 @@ import codecs
 import numpy as np
 
 from sklearn.ensemble import RandomForestClassifier
-from naive_bayes import NaiveBayesClassifier
+from nbc import NaiveBayesClassifier
 
 
 available_methods = ['naive_bayes', 'random_forest']
