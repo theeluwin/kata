@@ -35,22 +35,22 @@ Bonus Point:
 
 Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-coded"라고 써있는 부분이 이 프로젝트의 핵심.
 
-##### [POS Tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
+#### [POS Tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
 
 - [x] [CRF](https://en.wikipedia.org/wiki/Conditional_random_field) with [pycrfsuite](https://python-crfsuite.readthedocs.io/en/latest/) `baseline`
 - [x] [HMM](https://en.wikipedia.org/wiki/Hidden_Markov_model), hard-coded
 
-##### Classification: [Titanic Survival](https://www.kaggle.com/c/titanic)
+#### Classification: [Titanic Survival](https://www.kaggle.com/c/titanic)
 
 - [x] [Random Forest Classifier](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from [sklearn](http://scikit-learn.org/) `baseline`
 - [x] [Naive Bayes Classifier](https://en.wikipedia.org/wiki/Naive_Bayes_classifier), hard-coded
 
-##### Recommendation: [MovieLens](http://grouplens.org/datasets/movielens/)
+#### Recommendation: [MovieLens](http://grouplens.org/datasets/movielens/)
 
 - [x] [Model-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Model-based), hard-coded `baseline`
 - [x] [Memory-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Memory-based), hard-coded
 
-##### [Polynomial Regression](https://en.wikipedia.org/wiki/Polynomial_regression)
+#### [Polynomial Regression](https://en.wikipedia.org/wiki/Polynomial_regression)
 
 - [x] [numpy polyfit](http://docs.scipy.org/doc/numpy/reference/generated/numpy.polyfit.html) `baseline`
 - [x] Linear Regression
@@ -58,7 +58,7 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 	- [x] hard-coded
 - [x] Normal Equation
 
-##### Classification: [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
+#### Classification: [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
 
 - [ ] [FFNN](https://en.wikipedia.org/wiki/Feedforward_neural_network)
 	- [ ] deep, using Keras `baseline`
@@ -70,26 +70,26 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 - [ ] [SVM](https://en.wikipedia.org/wiki/Support_vector_machine), hard-coded
 - [ ] [Random Forest](https://en.wikipedia.org/wiki/Random_forest), hard-coded
 
-##### Clustering: Random Colony
+#### Clustering: Random Colony
 
 - [ ] [k-means](https://en.wikipedia.org/wiki/K-means_clustering), hard-coded
 - [ ] [Hierarchical](https://en.wikipedia.org/wiki/Hierarchical_clustering), hard-coded
 - [ ] [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN), hard-coded
 
-##### [Word Embedding](https://en.wikipedia.org/wiki/Word_embedding)
+#### [Word Embedding](https://en.wikipedia.org/wiki/Word_embedding)
 
 - [ ] [GloVe](http://www.aclweb.org/anthology/D14-1162) with [glove-python](https://github.com/maciejkula/glove-python) `baseline`
 - [ ] [Word2Vec](https://en.wikipedia.org/wiki/Word2vec)
 	- [ ] [CBOW](https://en.wikipedia.org/wiki/Bag-of-words_model#CBOW), using TF
 	- [ ] [skip-gram](https://en.wikipedia.org/wiki/N-gram#Skip-gram), using TF
 
-##### Classification: [MNIST](http://yann.lecun.com/exdb/mnist/)
+#### Classification: [MNIST](http://yann.lecun.com/exdb/mnist/)
 
 - [ ] [CNN](https://en.wikipedia.org/wiki/Convolutional_neural_network)
 	- [ ] using Keras `baseline`
 	- [ ] using TF
 
-##### [Language Model](https://en.wikipedia.org/wiki/Language_model)
+#### [Language Model](https://en.wikipedia.org/wiki/Language_model)
 
 - [ ] [NPLM](http://www.jmlr.org/papers/v3/bengio03a.html), using TF `baseline`
 - [ ] [RNN](https://en.wikipedia.org/wiki/Recurrent_neural_network)
