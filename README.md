@@ -17,7 +17,7 @@
 4. 그냥 짤 수 있는것도 굳이 [numpy](http://www.numpy.org/)를 활용해서 해볼 것
 5. 알고리즘이 실제로 쓰이는 task가 있어야 함
 	* 이를 해결하고 evaluation하는 부분까지 구현
-	* 외부 라이브러리에서 제공되는, 해당 task를 해결 할 수 있는 다른 알고리즘도 같이 포함 시켜서 비교 해보기 (baseline)
+	* 외부 라이브러리에서 제공 되거나 간단하게 구현해 볼 수 있는 다른 알고리즘도 같이 포함 시켜서 비교 해보기 (`baseline`)
 6. 데이터셋 포함
 	* 크기가 너무 크면 다운로더를 제공
 	* 공개된 자료(출처 명시) 혹은 쉽게 생성해낼 수 있는 데이터를 사용
@@ -35,6 +35,21 @@ Bonus Point:
 
 Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-coded"라고 써있는 부분이 이 프로젝트의 핵심.
 
+##### [POS Tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
+
+- [x] [CRF](https://en.wikipedia.org/wiki/Conditional_random_field) with [pycrfsuite](https://python-crfsuite.readthedocs.io/en/latest/) `baseline`
+- [x] [HMM](https://en.wikipedia.org/wiki/Hidden_Markov_model), hard-coded
+
+##### Classification: [Titanic Survival](https://www.kaggle.com/c/titanic)
+
+- [x] [Random Forest Classifier](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from [sklearn](http://scikit-learn.org/) `baseline`
+- [x] [Naive Bayes Classifier](https://en.wikipedia.org/wiki/Naive_Bayes_classifier), hard-coded
+
+##### Recommendation: [MovieLens](http://grouplens.org/datasets/movielens/)
+
+- [x] [Model-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Model-based), hard-coded `baseline`
+- [x] [Memory-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Memory-based), hard-coded
+
 ##### [Polynomial Regression](https://en.wikipedia.org/wiki/Polynomial_regression)
 
 - [x] [numpy polyfit](http://docs.scipy.org/doc/numpy/reference/generated/numpy.polyfit.html) `baseline`
@@ -42,35 +57,6 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 	- [x] using TF
 	- [x] hard-coded
 - [x] Normal Equation
-
-##### [POS Tagging](https://en.wikipedia.org/wiki/Part-of-speech_tagging)
-
-- [x] [CRF](https://en.wikipedia.org/wiki/Conditional_random_field) with [pycrfsuite](https://python-crfsuite.readthedocs.io/en/latest/) `baseline`
-- [x] [HMM](https://en.wikipedia.org/wiki/Hidden_Markov_model), hard-coded
-
-##### [Word Embedding](https://en.wikipedia.org/wiki/Word_embedding)
-
-- [ ] [word2vec](https://radimrehurek.com/gensim/models/word2vec.html) from [gensim](https://radimrehurek.com/gensim/index.html) `baseline`
-- [ ] [GloVe](http://www.aclweb.org/anthology/D14-1162), ?
-- [ ] [Word2Vec](https://en.wikipedia.org/wiki/Word2vec)
-	- [ ] [CBOW](https://en.wikipedia.org/wiki/Bag-of-words_model#CBOW), using TF
-	- [ ] [skip-gram](https://en.wikipedia.org/wiki/N-gram#Skip-gram), using TF
-
-##### Recommendation: [MovieLens](http://grouplens.org/datasets/movielens/)
-
-- [x] [Model-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Model-based) `baseline`
-- [x] [Memory-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Memory-based)
-
-##### Clustering: ?
-
-- [ ] [k-means](https://en.wikipedia.org/wiki/K-means_clustering), hard-coded
-- [ ] [Hierarchical](https://en.wikipedia.org/wiki/Hierarchical_clustering), hard-coded
-- [ ] [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN), hard-coded
-
-##### Classification: [Titanic Survival](https://www.kaggle.com/c/titanic)
-
-- [x] [Random Forest Classifier](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from [sklearn](http://scikit-learn.org/) `baseline`
-- [x] [Naive Bayes Classifier](https://en.wikipedia.org/wiki/Naive_Bayes_classifier), hard-coded
 
 ##### Classification: [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
 
@@ -84,8 +70,39 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 - [ ] [SVM](https://en.wikipedia.org/wiki/Support_vector_machine), hard-coded
 - [ ] [Random Forest](https://en.wikipedia.org/wiki/Random_forest), hard-coded
 
+##### Clustering: Random Colony
+
+- [ ] [k-means](https://en.wikipedia.org/wiki/K-means_clustering), hard-coded
+- [ ] [Hierarchical](https://en.wikipedia.org/wiki/Hierarchical_clustering), hard-coded
+- [ ] [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN), hard-coded
+
+##### [Word Embedding](https://en.wikipedia.org/wiki/Word_embedding)
+
+- [ ] [GloVe](http://www.aclweb.org/anthology/D14-1162) with [glove-python](https://github.com/maciejkula/glove-python) `baseline`
+- [ ] [Word2Vec](https://en.wikipedia.org/wiki/Word2vec)
+	- [ ] [CBOW](https://en.wikipedia.org/wiki/Bag-of-words_model#CBOW), using TF
+	- [ ] [skip-gram](https://en.wikipedia.org/wiki/N-gram#Skip-gram), using TF
+
 ##### Classification: [MNIST](http://yann.lecun.com/exdb/mnist/)
 
 - [ ] [CNN](https://en.wikipedia.org/wiki/Convolutional_neural_network)
 	- [ ] using Keras `baseline`
 	- [ ] using TF
+
+##### [Language Model](https://en.wikipedia.org/wiki/Language_model)
+
+- [ ] [NPLM](http://www.jmlr.org/papers/v3/bengio03a.html), using TF `baseline`
+- [ ] [RNN](https://en.wikipedia.org/wiki/Recurrent_neural_network)
+    - [ ] using Keras
+    - [ ] using TF
+    - [ ] [LSTM](https://en.wikipedia.org/wiki/Long_short-term_memory), using TF
+
+이정도면 아마 고전적인 머신러닝 알고리즘들은 대부분 커버할 수 있을듯?
+
+## Advanced
+
+최신 논문들을 TF로 구현해보기.
+
+- [ ] [Effective Approaches to Attention-based Neural Machine Translation](http://arxiv.org/abs/1508.04025)
+- [ ] [LCSTS: A Large Scale Chinese Short Text Summarization Dataset](http://arxiv.org/abs/1506.05865)
+- [ ] [Towards Abstraction from Extraction: Multiple Timescale Gated Recurrent Unit for Summarization](http://arxiv.org/abs/1607.00718)
