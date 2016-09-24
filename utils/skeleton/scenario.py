@@ -30,8 +30,7 @@ class Scenario(Draft):
 
     @Draft.print_elapsed
     def play(self):
-        result = self.baseline()
-        return result
+        self.baseline()
 
 #------------------------------------------------------------------------------#
 

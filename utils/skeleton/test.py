@@ -7,6 +7,8 @@ import unittest
 
 from scenario import Scenario
 
+#------------------------------------------------------------------------------#
+
 
 class ScenarioTest(unittest.TestCase):
 
@@ -16,6 +18,7 @@ class ScenarioTest(unittest.TestCase):
     def test_baseline(self):
         self.assertEqual(1, self.scenario.baseline())
 
+#------------------------------------------------------------------------------#
 
 if __name__ == '__main__':
     unittest.main()

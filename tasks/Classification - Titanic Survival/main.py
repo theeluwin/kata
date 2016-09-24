@@ -19,7 +19,7 @@ available_methods = ['naive_bayes', 'random_forest']
 
 
 def read_data(filepath):
-    raws = codecs.open(filepath, 'r', encoding='utf-8').read().split('\n')[1:]
+    raws = codecs.open(filepath, 'r', encoding='utf-8').read().strip().split('\n')
     rows = csv.reader(raws)
     x, y = [], []
     for row in rows:
@@ -55,18 +55,18 @@ def main(method='naive_bayes', cheat=False):
     train_x, train_y = read_data('data/train.csv')
     test_x, test_y = read_data('data/test.csv')
     if method == 'naive_bayes':
-        nb = NaiveBayesClassifier(train_x.shape[1])
-        nb.fit(train_x, train_y)
+        nbc = NaiveBayesClassifier(train_x.shape[1])
+        nbc.fit(train_x, train_y)
         if cheat:
-            nb.fit(test_x, test_y)
-        pred_y = nb.predict(test_x)
+            nbc.fit(test_x, test_y)
+        pred_y = nbc.predict(test_x)
         flush('output_naive_bayes.txt', pred_y)
     elif method == 'random_forest':
-        rf = RandomForestClassifier()
-        rf.fit(train_x, train_y)
+        rfc = RandomForestClassifier()
+        rfc.fit(train_x, train_y)
         if cheat:
-            rf.fit(test_x, test_y)
-        pred_y = rf.predict(test_x)
+            rfc.fit(test_x, test_y)
+        pred_y = rfc.predict(test_x)
         flush('output_random_forest.txt', pred_y)
     evaluate(test_y, pred_y)
 

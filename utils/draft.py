@@ -26,7 +26,7 @@ class Draft(object):
             self.cheat = bool(arguments[2]) if len(arguments) > 2 else False
             self.verbose = bool(arguments[3]) if len(arguments) > 3 else True
             if self.method not in self.available_methods and self.verbose:
-                print("usage: python {} [method]".format(arguments[0]))
+                print(colors.red("usage: python {} [method]".format(arguments[0])))
         if self.method not in self.available_methods:
             raise IndexError("available methods: {}".format(', '.join(self.available_methods)))
 

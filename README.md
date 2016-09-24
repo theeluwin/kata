@@ -61,9 +61,9 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 #### Classification: [Iris Flower](https://en.wikipedia.org/wiki/Iris_flower_data_set)
 
 - [ ] [FFNN](https://en.wikipedia.org/wiki/Feedforward_neural_network)
-	- [ ] deep, using Keras `baseline`
-	- [ ] shallow, using TF
-	- [ ] shallow, hard-coded
+	- [x] using Keras `baseline`
+	- [ ] using TF
+	- [ ] hard-coded
 - [ ] [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression)
 	- [ ] using TF
 	- [ ] hard-coded
