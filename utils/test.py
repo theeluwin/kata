@@ -6,6 +6,7 @@ from __future__ import division, print_function, unicode_literals
 import unittest
 
 from draft import Draft
+from pencil import levenshtein
 
 
 class TooShortScenario(Draft):
@@ -65,6 +66,16 @@ class DraftTest(unittest.TestCase):
         self.assertEqual(self.sys_argv_scenario.available_methods[0], self.sys_argv_scenario.method)
         self.assertEqual(False, self.sys_argv_scenario.cheat)
         self.assertEqual(True, self.sys_argv_scenario.verbose)
+
+
+class LevenshteinTest(unittest.TestCase):
+
+    def setUp(self):
+        self.s = 'GUMBO'
+        self.t = 'GAMBOL'
+
+    def test_levenshtein(self):
+        self.assertEqual(2, levenshtein(self.s, self.t))
 
 
 if __name__ == '__main__':
