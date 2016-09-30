@@ -24,7 +24,7 @@ def levenshtein(s, t, trace=False, verbose=False):
             p[i - 1, j - 1] = k
     distance = int(d[n, m])
     if verbose:
-        print('\n ' + t)
+        print(' ' + t)
         for i in range(n):
             print(s[i] + ''.join([arrows[int(k)] for k in p[i]]))
     if trace:

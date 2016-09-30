@@ -31,6 +31,16 @@ class Draft(object):
             raise IndexError("available methods: {}".format(', '.join(self.available_methods)))
 
     @staticmethod
+    def benchmark(Scenario):
+        cheats = [False, True]
+        cheater = lambda cheat: "cheat" if cheat else "clean"
+        for method in Scenario.available_methods:
+            for cheat in cheats:
+                scenario = Scenario(method=method, cheat=cheat, verbose=False)
+                result = scenario.play()
+                print("{}\t{}\t{}".format(method, cheater(cheat), result))
+
+    @staticmethod
     def verbose_elapsed(interval):
         if interval < 60:
             return "%4.02fs" % interval
@@ -45,6 +55,10 @@ class Draft(object):
         verbose += "{}m ".format(minutes) if minutes else ""
         verbose += "{}s".format(seconds)
         return verbose
+
+    @staticmethod
+    def verbose_percent(value):
+        return "%4.02f%%" % (value * 100)
 
     def print_elapsed(f):
         def wrapper(self, *args, **kwargs):

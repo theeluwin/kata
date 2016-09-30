@@ -22,12 +22,31 @@
 	* 크기가 너무 크면 다운로더를 제공
 	* 공개된 자료(출처 명시) 혹은 쉽게 생성해낼 수 있는 데이터를 사용
 7. 라이브러리 수준으로 최대한 범용적이게 구현할것
-8. 유닛 테스트
+8. `utils/skeleton`에 있는 형식을 사용할것
+    * 이렇게 싱글톤으로 스크립트를 짜게되면 어디까지를 공통분모로 처리할지가 애매해지는데, 기준은 각각의 메소드가 유닛테스트를 하기에 적합하도록 쪼개기
+    * 따라서 적합한 유닛테스트 작성도 이 수련에 포함됨
 
 Bonus Point:
 * test set까지 학습해버리면(cheating) 정말로 성능이 증가하는지 체크
 * partial fit이 가능하면 구현 해볼것
 * 예쁘게 figure 그리기
+
+<br />
+
+## Usage
+
+충분히 범용적으로 쓰일 수 있도록 코딩해둔 모듈들:
+
+- [HMM]()
+- [Naive Bayes Classifier]()
+- [Collaborative Filtering]()
+- [Linear Regression]()
+
+테스트는 각 task 디렉토리 내에서 `test.py`를 `-m` 옵션 없이 실행시키면 됨!
+
+`test.py benchmark`로 실행 시키면 유닛테스트 대신에 모든 메소드를 싹 돌려서 성능 비교표를 뽑아줌
+
+(이렇게 되도록 하는 작업은 아직 하는중)
 
 <br />
 
@@ -47,7 +66,7 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 
 #### Recommendation: [MovieLens](http://grouplens.org/datasets/movielens/)
 
-- [x] [Model-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Model-based), hard-coded `baseline`
+- [x] [Model-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Model-based) with [scipy](http://www.scipy.org/) `baseline`
 - [x] [Memory-Based CF](https://en.wikipedia.org/wiki/Collaborative_filtering#Memory-based), hard-coded
 
 #### [Polynomial Regression](https://en.wikipedia.org/wiki/Polynomial_regression)

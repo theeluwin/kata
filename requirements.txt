@@ -2,6 +2,7 @@ cycler==0.10.0
 ecdsa==0.13
 Fabric==1.12.0
 funcsigs==1.0.2
+Keras==1.1.0
 matplotlib==1.5.2
 mock==2.0.0
 numpy==1.11.1
@@ -14,7 +15,9 @@ pyparsing==2.1.8
 python-crfsuite==0.8.4
 python-dateutil==2.5.3
 pytz==2016.6.1
+PyYAML==3.12
 scikit-learn==0.17.1
 scipy==0.18.0
 six==1.10.0
 tensorflow==0.10.0rc0
+Theano==0.8.2
