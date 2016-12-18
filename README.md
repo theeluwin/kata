@@ -8,10 +8,11 @@
 
 주로 머신러닝 관련 알고리즘과 방법론을 구현하며, 딥러닝의 경우는 기본적인 부분 빼고는 [Keras](https://keras.io/)나 [Tensorflow](https://www.tensorflow.org/)를 사용 할 예정.
 
-코딩의 [제약 조건](https://namu.wiki/w/%EC%A0%9C%EC%95%BD%28%ED%97%8C%ED%84%B0X%ED%97%8C%ED%84%B0%29)으로는 다음이 있음:
+`tasks`엔 머신러닝 관련을, `algorithms`엔 [코세라 스탠포드 알고리즘 강의](https://www.coursera.org/learn/algorithms-divide-conquer)에서 다룬 알고리즘들을 구현함.
 
-1. 파이썬 2, 3 모두 지원되는 코드
-	* 나눠서 짜는게 아니라 [코드 자체에 compatibility](http://python-future.org/compatible_idioms.html)가 있도록
+머신러닝의 경우 코딩의 [제약 조건](https://namu.wiki/w/%EC%A0%9C%EC%95%BD%28%ED%97%8C%ED%84%B0X%ED%97%8C%ED%84%B0%29)이 다음과 같이 이음:
+
+1. 파이썬3, PEP8에서 E501 빼고
 2. 주석은 안써도 되지만 코드 퀄리티는 남들에게 보여줄 수 있을 정도는 되어야 함
 3. [numpy](http://www.numpy.org/), [scikit-learn](http://scikit-learn.org/stable/) 등에서 제공되는 보조도구까진 사용해도 되지만 알고리즘 로직 자체는 직접 짜야함
 4. 그냥 짤 수 있는것도 굳이 [numpy](http://www.numpy.org/)를 활용해서 해볼 것
