@@ -28,7 +28,7 @@ def coursera_test():
     raw = file.read().strip().replace('\r', '')
     data = [int(value) for value in raw.split('\n')]
     c, z = ci.count_inversion(data)
-    print(z)
+    print(z)  # 2407905288
 
 
 if __name__ == '__main__':

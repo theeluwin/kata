@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import unittest
 import ms
+import unittest
 
 
 class TestMergeSort(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestMergeSort(unittest.TestCase):
     def test_merge(self):
         self.assertEqual([1, 2, 3, 4], ms.merge(self.b, self.c))
 
-    def test_sorte(self):
+    def test_sort(self):
         self.assertEqual([1, 2, 3, 4], ms.sort(self.a))
 
 
