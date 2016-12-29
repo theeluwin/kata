@@ -39,5 +39,4 @@ class TestQuickSort(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # coursera_test()
     unittest.main()
