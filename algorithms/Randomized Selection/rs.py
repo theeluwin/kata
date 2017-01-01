@@ -20,7 +20,7 @@ def partition(a):
     return q
 
 
-def select(a, i):
+def select(a, i):  # note that this selects i'th largest element, not the index!
     if len(a) == 1:
         return a[0]
     a = list(a)
