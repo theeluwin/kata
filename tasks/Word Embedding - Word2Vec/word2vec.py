@@ -7,10 +7,11 @@ import numpy as np
 
 class Word2Vec(object):
 
-    def __init__(self, dimension=100, alpha=1e-5, window=5, verbose=True):
+    def __init__(self, dimension=50, alpha=1e-5, window=5, every=10000, verbose=True):
         self.dimension = dimension
         self.alpha = alpha
         self.window = window
+        self.every = every
         self.verbose = verbose
         self.ivectors = {}
         self.ovectors = {}
@@ -19,6 +20,16 @@ class Word2Vec(object):
     def log(self, message):
         if self.verbose:
             print(message)
+
+    def load(self, filepath):
+        with open(filepath, 'rb') as file:
+            self.ivectors = pickle.load(file)
+            self.vocabulary = set(self.ivectors.keys())
+
+    def cos(self, w1, w2):
+        v1 = self.ivectors[w1]
+        v2 = self.ivectors[w2]
+        return v1.dot(v2) / np.linalg.norm(v1) / np.linalg.norm(v2)
 
     def build(self, filepath):
         self.log("building vocabulary...")
@@ -47,13 +58,16 @@ class Word2Vec(object):
                         if loss and not np.isnan(loss):
                             losses.append(loss)
                     step += 1
+                    if not step % self.every:
+                        self.checkpoint(era, step)
                     if len(losses):
                         loss = sum(losses) / len(losses)
                         self.log("epoch {}, step {}, loss: {}".format(era, step, loss))
-            self.checkpoint(era)
+        self.checkpoint(era, step)
+        print("done.")
 
-    def checkpoint(self, era):
-        with open('models/epoch-{}'.format(era), 'wb') as file:
+    def checkpoint(self, era, step):
+        with open('output/epoch-{}-step-{}'.format(era, step), 'wb') as file:
             pickle.dump(self.ivectors, file)
 
     def skipgram(self, sentence, i):
