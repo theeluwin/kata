@@ -26,6 +26,7 @@
 8. `utils/skeleton`에 있는 형식을 사용할것
     * 이렇게 싱글톤으로 스크립트를 짜게되면 어디까지를 공통분모로 처리할지가 애매해지는데, 기준은 각각의 메소드가 유닛테스트를 하기에 적합하도록 쪼개기
     * 따라서 적합한 유닛테스트 작성도 이 수련에 포함됨
+9. 사실 위 1~8 원칙을 열심히 지키려고 했으나 어느새 망가져서 그냥 코드 정리도 포기하고 파이썬2, 3도 섞여있고 막 그럼ㅎㅎ.. 에라 모르겠다. 그냥 한번씩 구현 해봤다는것을 온전히 기록하기 위함일 뿐입니다. 흥흥흥~
 
 Bonus Point:
 * test set까지 학습해버리면(cheating) 정말로 성능이 증가하는지 체크
@@ -98,8 +99,10 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 
 #### [Word Embedding](https://en.wikipedia.org/wiki/Word_embedding)
 
-- [ ] [GloVe](http://www.aclweb.org/anthology/D14-1162) with [glove-python](https://github.com/maciejkula/glove-python) `baseline`
-- [ ] [Word2Vec](https://en.wikipedia.org/wiki/Word2vec), hard-coded
+- [ ] [GloVe](http://www.aclweb.org/anthology/D14-1162)
+	- [ ] with [glove-python](https://github.com/maciejkula/glove-python) `baseline`
+	- [ ] hard-coded
+- [x] [Word2Vec](https://en.wikipedia.org/wiki/Word2vec), hard-coded
 
 #### Classification: [MNIST](http://yann.lecun.com/exdb/mnist/)
 
