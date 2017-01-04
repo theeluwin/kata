@@ -7,7 +7,7 @@ import numpy as np
 
 class Word2Vec(object):
 
-    def __init__(self, dimension=50, alpha=1e-5, window=5, every=10000, verbose=True):
+    def __init__(self, dimension=50, alpha=1e-1, window=5, every=1000, verbose=True):
         self.dimension = dimension
         self.alpha = alpha
         self.window = window
@@ -39,10 +39,10 @@ class Word2Vec(object):
                 for word in sentence:
                     self.vocabulary.add(word)
         for word in self.vocabulary:
-            self.ivectors[word] = np.random.normal(size=self.dimension)
-            self.ovectors[word] = np.random.normal(size=self.dimension)
+            self.ivectors[word] = np.abs(np.random.normal(size=self.dimension))
+            self.ovectors[word] = np.abs(np.random.normal(size=self.dimension))
 
-    def fit(self, filepath, epoch=3):
+    def fit(self, filepath, epoch=1):
         self.log("learning...")
         for era in range(1, epoch + 1):
             step = 0
@@ -51,18 +51,22 @@ class Word2Vec(object):
                     sentence = [token for token in line.split() if token and token in self.vocabulary]
                     if len(sentence) < 2:
                         continue
-                    losses = []
+                    befores = []
+                    afters = []
                     for i in range(len(sentence)):
                         iword, contexts = self.skipgram(sentence, i)
-                        loss = self.learn(iword, contexts)
-                        if loss and not np.isnan(loss):
-                            losses.append(loss)
+                        before, after = self.learn(iword, contexts)
+                        if before and not np.isnan(before) and after and not np.isnan(after):
+                            befores.append(before)
+                            afters.append(after)
                     step += 1
                     if not step % self.every:
                         self.checkpoint(era, step)
-                    if len(losses):
-                        loss = sum(losses) / len(losses)
-                        self.log("epoch {}, step {}, loss: {}".format(era, step, loss))
+                    if len(befores) and len(afters):
+                        before = sum(befores) / len(befores)
+                        after = sum(afters) / len(afters)
+                        if not step % int(self.every / 10):
+                            self.log("epoch %d, step %d, before loss: %7.4f, after loss: %7.4f" % (era, step, before, after))
         self.checkpoint(era, step)
         print("done.")
 
@@ -76,12 +80,20 @@ class Word2Vec(object):
         right = sentence[i + 1: i + 1 + self.window]
         return iword, left + right
 
-    def learn(self, iword, contexts):
+    def cost(self, iword, contexts):
         ivector = self.ivectors[iword]
+        Z = sum([np.exp(ivector.dot(self.ovectors[word])) for word in self.vocabulary])
+        p = np.array([np.exp(ivector.dot(self.ovectors[context])) / Z for context in contexts])
+        if len(p):
+            return -(np.log(p)).sum() / len(p)
+        else:
+            return np.nan
+
+    def learn(self, iword, contexts):
+        before = self.cost(iword, contexts)
+        ivector = np.array(self.ivectors[iword])
         cerrors = {}
-        Z = 0
-        for word in self.vocabulary:
-            Z += np.exp(ivector.dot(self.ovectors[word]))
+        Z = sum([np.exp(ivector.dot(self.ovectors[word])) for word in self.vocabulary])
         for word in self.vocabulary:
             cerrors[word] = []
             for context in contexts:
@@ -91,15 +103,5 @@ class Word2Vec(object):
             error = sum(cerrors[word])
             self.ivectors[iword] -= self.alpha * error * self.ovectors[word]
             self.ovectors[word] -= self.alpha * error * ivector
-        ivector = self.ivectors[iword]
-        Z = 0
-        for word in self.vocabulary:
-            Z += np.exp(ivector.dot(self.ovectors[word]))
-        p = []
-        for context in contexts:
-            p.append(np.exp(ivector.dot(self.ovectors[context])) / Z)
-        p = np.array(p)
-        if len(p):
-            return -(np.log(p)).sum() / len(p)
-        else:
-            return np.nan
+        after = self.cost(iword, contexts)
+        return before, after
