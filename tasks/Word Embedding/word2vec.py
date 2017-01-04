@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import csv
 import codecs
 import pickle
 import numpy as np
@@ -7,7 +8,7 @@ import numpy as np
 
 class Word2Vec(object):
 
-    def __init__(self, dimension=50, alpha=1e-1, window=5, every=1000, verbose=True):
+    def __init__(self, dimension=50, alpha=1e-1, window=5, every=1000, outpath='output', goldpath='gold.txt', verbose=True):
         self.dimension = dimension
         self.alpha = alpha
         self.window = window
@@ -16,15 +17,36 @@ class Word2Vec(object):
         self.ivectors = {}
         self.ovectors = {}
         self.vocabulary = set()
+        self.outpath = outpath
+        self.goldpath = goldpath
 
     def log(self, message):
         if self.verbose:
             print(message)
 
-    def load(self, filepath):
+    @staticmethod
+    def load(filepath):
         with open(filepath, 'rb') as file:
-            self.ivectors = pickle.load(file)
-            self.vocabulary = set(self.ivectors.keys())
+            return pickle.load(file)
+
+    def evaluate(self):
+        golds = []
+        with codecs.open(self.goldpath, 'r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                golds.append({
+                    'v1': row[0],
+                    'v2': row[1],
+                    'sim': float(row[2]),
+                })
+        x = np.array([gold['sim'] for gold in golds])
+        y = []
+        for gold in golds:
+            y.append(self.cos(gold['v1'], gold['v2']))
+        y = np.array(y)
+        p = x.dot(y) / np.linalg.norm(x) / np.linalg.norm(y)
+        self.log("score: %4.02f" % p)
+        return p
 
     def cos(self, w1, w2):
         v1 = self.ivectors[w1]
@@ -39,8 +61,8 @@ class Word2Vec(object):
                 for word in sentence:
                     self.vocabulary.add(word)
         for word in self.vocabulary:
-            self.ivectors[word] = np.abs(np.random.normal(size=self.dimension))
-            self.ovectors[word] = np.abs(np.random.normal(size=self.dimension))
+            self.ivectors[word] = np.random.normal(size=self.dimension)
+            self.ovectors[word] = np.random.normal(size=self.dimension)
 
     def fit(self, filepath, epoch=1):
         self.log("learning...")
@@ -68,11 +90,12 @@ class Word2Vec(object):
                         if not step % int(self.every / 10):
                             self.log("epoch %d, step %d, before loss: %7.4f, after loss: %7.4f" % (era, step, before, after))
         self.checkpoint(era, step)
-        print("done.")
+        self.log("done.")
 
     def checkpoint(self, era, step):
-        with open('output/epoch-{}-step-{}'.format(era, step), 'wb') as file:
-            pickle.dump(self.ivectors, file)
+        self.evaluate()
+        with open('{}/epoch-{}-step-{}'.format(self.outpath, era, step), 'wb') as file:
+            pickle.dump(self, file)
 
     def skipgram(self, sentence, i):
         iword = sentence[i]
