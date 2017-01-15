@@ -5,8 +5,12 @@ class Heap(object):
 
     def __init__(self, initial=[]):
         self.tree = []
+        self.lookup = {}
         for value in initial:
             self.push(value)
+
+    def is_empty(self):
+        return not bool(len(self.tree))
 
     def left(self, index):
         return 2 * index + 1
@@ -18,7 +22,18 @@ class Heap(object):
         return int((index - 1) / 2)
 
     def swap(self, index1, index2):
-        self.tree[index1], self.tree[index2] = self.tree[index2], self.tree[index1]
+        value1 = self.tree[index1]
+        value2 = self.tree[index2]
+        self.lookup[value1] = index2
+        self.lookup[value2] = index1
+        self.tree[index1] = value2
+        self.tree[index2] = value1
+
+    def up(self, index):
+        parent = self.parent(index)
+        if self.tree[index] < self.tree[parent]:
+            self.swap(parent, index)
+            return self.up(parent)
 
     def down(self, index):
         size = len(self.tree)
@@ -38,8 +53,15 @@ class Heap(object):
                     self.swap(left, index)
                     return self.down(left)
 
+    def manipulate(self, value, manipulator):
+        index = self.lookup[value]
+        manipulator(self.tree[index])
+        self.down(index)
+        self.up(index)
+
     def delete(self, index):
         value = self.tree[index]
+        del self.lookup[value]
         last = len(self.tree) - 1
         self.swap(last, index)
         self.tree.pop()
@@ -49,6 +71,7 @@ class Heap(object):
     def push(self, value):
         self.tree.append(value)
         index = len(self.tree) - 1
+        self.lookup[value] = index
         while True:
             if index == 0:
                 return
