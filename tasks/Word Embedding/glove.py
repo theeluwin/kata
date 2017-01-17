@@ -79,7 +79,7 @@ class Glove(object):
             self.having_context[word] = set()
         self.log("done")
 
-    def fit(self, filepath, epoch=50):
+    def fit(self, filepath, epoch=100):
         self.log("building co-occurence matrix...")
         with codecs.open(filepath, 'r', encoding='utf-8') as file:
             for line in file:
