@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
 import csv
 import codecs
 import pickle
@@ -79,7 +78,7 @@ class Glove(object):
             self.having_context[word] = set()
         self.log("done")
 
-    def fit(self, filepath, epoch=100):
+    def fit(self, filepath, epoch=200):
         self.log("building co-occurence matrix...")
         with codecs.open(filepath, 'r', encoding='utf-8') as file:
             for line in file:
@@ -151,7 +150,7 @@ class Glove(object):
 
     def checkpoint(self, era):
         self.evaluate()
-        with open('{}/glove-epoch'.format(self.outpath, era), 'wb') as file:
+        with open('{}/glove-epoch-{}'.format(self.outpath, era), 'wb') as file:
             pickle.dump(self, file)
 
     def calculate_error(self, iword, jword):
