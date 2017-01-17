@@ -94,7 +94,7 @@ class Word2Vec(object):
 
     def checkpoint(self, era, step):
         self.evaluate()
-        with open('{}/epoch-{}-step-{}'.format(self.outpath, era, step), 'wb') as file:
+        with open('{}/word2vec-epoch-{}-step-{}'.format(self.outpath, era, step), 'wb') as file:
             pickle.dump(self, file)
 
     def skipgram(self, sentence, i):
