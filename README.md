@@ -99,7 +99,7 @@ Task와 그걸 해결 할 수 있는 알고리즘들의 나열로 기재. "hard-
 
 #### [Word Embedding](https://en.wikipedia.org/wiki/Word_embedding)
 
-- [ ] [GloVe](http://www.aclweb.org/anthology/D14-1162), hard-coded
+- [x] [GloVe](http://www.aclweb.org/anthology/D14-1162), hard-coded
 - [x] [Word2Vec](https://en.wikipedia.org/wiki/Word2vec), hard-coded
 
 #### Classification: [MNIST](http://yann.lecun.com/exdb/mnist/)
