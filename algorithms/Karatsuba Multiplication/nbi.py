@@ -65,7 +65,7 @@ def NaiveBigIntFactory(base):
             return 'nbi<{}>({})'.format(base, self.__str__())
 
         def __hash__(self):
-            return str(self)
+            return int(self)
 
         def __nonzero__(self):
             self.compactify()

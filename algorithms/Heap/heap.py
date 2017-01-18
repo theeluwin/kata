@@ -3,9 +3,10 @@
 
 class Heap(object):
 
-    def __init__(self, initial=[]):
+    def __init__(self, initial=[], compare=lambda x, y: x < y):
         self.tree = []
         self.lookup = {}
+        self.compare = compare
         for value in initial:
             self.push(value)
 
@@ -31,7 +32,7 @@ class Heap(object):
 
     def up(self, index):
         parent = self.parent(index)
-        if self.tree[index] < self.tree[parent]:
+        if self.compare(self.tree[index], self.tree[parent]):
             self.swap(parent, index)
             return self.up(parent)
 
@@ -41,15 +42,15 @@ class Heap(object):
         right = self.right(index)
         if left < size:
             if right < size:
-                if self.tree[left] < self.tree[index] or self.tree[right] < self.tree[index]:
-                    if self.tree[left] < self.tree[right]:
+                if self.compare(self.tree[left], self.tree[index]) or self.compare(self.tree[right], self.tree[index]):
+                    if self.compare(self.tree[left], self.tree[right]):
                         self.swap(left, index)
                         return self.down(left)
                     else:
                         self.swap(right, index)
                         return self.down(right)
             else:
-                if self.tree[left] < self.tree[index]:
+                if self.compare(self.tree[left], self.tree[index]):
                     self.swap(left, index)
                     return self.down(left)
 
@@ -76,7 +77,7 @@ class Heap(object):
             if index == 0:
                 return
             parent = self.parent(index)
-            if self.tree[parent] > self.tree[index]:
+            if self.compare(self.tree[index], self.tree[parent]):
                 self.swap(parent, index)
                 index = parent
             else:
