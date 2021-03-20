@@ -6,7 +6,7 @@ curtsies==0.2.11
 gnureadline==6.3.3
 greenlet==0.4.11
 ipython==2.3.1
-Jinja2==2.7.3
+Jinja2==2.11.3
 MarkupSafe==0.23
 matplotlib==1.4.2
 mock==1.0.1
