@@ -1,7 +1,7 @@
 backports.ssl-match-hostname==3.4.0.2
 blessings==1.6
 bpython==0.16
-certifi==14.5.14
+certifi==2022.12.7
 curtsies==0.2.11
 gnureadline==6.3.3
 greenlet==0.4.11
