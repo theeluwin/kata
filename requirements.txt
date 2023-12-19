@@ -7,7 +7,7 @@ matplotlib==1.5.2
 mock==2.0.0
 numpy==1.22.0
 pandas==0.18.1
-paramiko==2.10.1
+paramiko==3.4.0
 pbr==1.10.0
 protobuf==3.18.3
 pycrypto==2.6.1
