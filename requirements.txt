@@ -9,7 +9,7 @@ numpy==1.22.0
 pandas==0.18.1
 paramiko==3.4.0
 pbr==1.10.0
-protobuf==3.18.3
+protobuf==4.25.8
 pycrypto==2.6.1
 pyparsing==2.1.8
 python-crfsuite==0.8.4
